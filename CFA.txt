@@ -1,0 +1,54 @@
+library(lavaan)
+alph<-read.csv("Alpha.csv", sep = ',', header = TRUE)
+head(alph)
+summary(alph)
+dim(alph)
+str(alph)
+is.na(alph)
+alph<-na.omit(alph)               
+View(alph)
+plot(alph)
+
+
+names(alph)
+# CFA Model
+
+alpha1<-'
+AGP=~AGP1+AGP2+AGP3+AGP4+AGP5+AGP6
+GID=~GID1+GID2+GID3+GID4+GID5
+M=~M1+M2+M3+M4+M5
+B=~B1+B2+B3+B4+B5'
+
+alpha2<-'AGP~~0*GID'
+
+
+
+alph_fit<-cfa(model=c(alpha1,alpha2),data=alph)
+
+summary(alph_fit,fit.measures=TRUE)
+
+parameterEstimates(alph_fit, standardized = TRUE)
+
+#SEM Plot
+
+View(sumalpha)
+plot(alpha1)
+semPlot::semPaths(object=alph_fit, 
+                  what = "std",
+                  whatLabels = "par",
+                  manifests = paste0("Q",1:21),
+                  reorder = FALSE,
+                  residScale = 3,
+                  nCharNodes = 0,
+                  style="lisrel",
+                  layout="tree2",
+                  rotation=2,
+                  sizeMan=2,
+                  sizeLat=2,
+                  theme="colorblind",
+                  edge.label.cex=1.2,
+                  label.cex=1.3,
+                  cardinal="lat cov,
+                  curvePivot=TRUE,
+                  sizeMan=3,
+                  sizeLat=4")
